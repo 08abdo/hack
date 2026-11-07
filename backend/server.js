@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const compression = require("compression");
 const path = require("path");
+const geoip = require("geoip-lite");
 
 const app = express();
 
@@ -36,7 +37,7 @@ app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// Middleware لتنبيه دخول زائر جديد للمتجر عبر تلغرام
+// Middleware لتنبيه دخول زائر جديد للمتجر عبر تلغرام (مع تحديد موقع الـ IP)
 app.use((req, res, next) => {
   if (
     req.method === "GET" &&
@@ -44,12 +45,19 @@ app.use((req, res, next) => {
   ) {
     const rawIp =
       req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-    const clientIp = rawIp ? rawIp.replace("::ffff:", "") : "Unknown";
+    const clientIp = rawIp ? rawIp.replace("::ffff:", "").trim() : "Unknown";
     const userAgent = req.headers["user-agent"] || "Unknown";
+
+    // جلب بيانات الموقع الجغرافي للـ IP
+    const geo = geoip.lookup(clientIp);
+    const region = geo
+      ? `${geo.city || "مدينة غير محددة"} (${geo.region || "الولاية غير محددة"}) - ${geo.country}`
+      : "موقع غير محدد";
 
     const alertMsg =
       `🛒 <b>زائر جديد دخل المتجر!</b>\n\n` +
       `🌐 <b>IP Address:</b> <code>${clientIp}</code>\n` +
+      `📍 <b>المنطقة (IP):</b> <code>${region}</code>\n` +
       `📱 <b>الجهاز:</b> <code>${userAgent.slice(0, 80)}...</code>`;
 
     sendTelegramAlert(alertMsg);
