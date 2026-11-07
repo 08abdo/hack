@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delta Shop</title>
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-container">
+        <div class="brand-area">
+          <div class="logo-box">
+            <img
+              src="image/logo.png"
+              alt="Logo"
+              class="site-logo"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <span class="brand-title">Delta Shop</span>
+            <span class="brand-subtitle">وجهتك الموثوقة لأفضل المنتجات</span>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button
+            onclick="toggleDarkMode()"
+            class="btn-icon"
+            title="تبديل الوضع"
+          >
+            <i id="theme-sun" class="fa-solid fa-sun hidden"></i>
+            <i id="theme-moon" class="fa-solid fa-moon"></i>
+          </button>
+
+          <button onclick="toggleCartModal()" class="btn-icon relative">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="cart-badge" class="badge hidden">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <!-- Hero Banner -->
+      <div class="hero">
+        <span class="hero-tag">عروض حصرية وتوصيل سريع</span>
+        <h1>أفضل المنتجات بلمسة عصرية</h1>
+        <p>اختر من بين أقسامنا المتميزة واطلب مباشرة!</p>
+      </div>
+
+      <!-- Categories -->
+      <div class="section-group">
+        <h3 class="section-title">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>أقسام المتجر</span>
+        </h3>
+        <div class="categories-bar" id="categories-bar"></div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="section-group">
+        <div class="flex-between mb-1">
+          <h3 id="current-category-title">جميع المنتجات</h3>
+          <span id="product-count" class="pill">0 منتج</span>
+        </div>
+        <div id="products-grid" class="products-grid"></div>
+      </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <button onclick="closeProductModal()" class="close-btn">&times;</button>
+        <div class="modal-img-box">
+          <img id="modal-img" src="" alt="منتج" loading="lazy" />
+        </div>
+        <h3 id="modal-title"></h3>
+        <p id="modal-desc" class="text-subtle"></p>
+
+        <!-- خيارات الألوان المتاحة -->
+        <div id="colors-wrapper" class="mb-1 hidden">
+          <span class="option-label">اللون:</span>
+          <div id="modal-colors-container" class="options-container"></div>
+        </div>
+
+        <!-- خيارات المقاسات المتاحة -->
+        <div id="sizes-wrapper" class="mb-1 hidden">
+          <span class="option-label">المقاس:</span>
+          <div id="modal-sizes-container" class="options-container"></div>
+        </div>
+
+        <div id="modal-price" class="price-tag mb-1"></div>
+
+        <div class="form-card border-top">
+          <input
+            type="text"
+            id="order-name"
+            placeholder="الاسم الكامل"
+            class="input"
+            required
+          />
+          <input
+            type="tel"
+            id="order-phone"
+            placeholder="رقم الهاتف"
+            class="input"
+            required
+          />
+          <input
+            type="text"
+            id="order-address"
+            placeholder="عنوان التوصيل/الولاية والبلدية"
+            class="input"
+            required
+          />
+          <button
+            onclick="submitDirectOrder()"
+            class="btn btn-primary btn-full"
+          >
+            تأكيد الطلب الآن
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Drawer / Sidebar -->
+    <div id="cart-modal" class="cart-overlay hidden">
+      <div class="cart-drawer">
+        <div class="cart-header">
+          <div class="cart-title">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>سلة التسوق</span>
+          </div>
+          <button onclick="toggleCartModal()" class="close-btn">&times;</button>
+        </div>
+
+        <div id="cart-items" class="cart-body">
+          <div class="empty-cart">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <p>السلة فارغة حالياً</p>
+          </div>
+        </div>
+
+        <div class="cart-footer">
+          <div class="cart-inputs mb-1">
+            <input
+              type="text"
+              id="cart-cust-name"
+              placeholder="الاسم الكامل"
+              class="input"
+            />
+            <input
+              type="tel"
+              id="cart-cust-phone"
+              placeholder="رقم الهاتف"
+              class="input"
+            />
+            <input
+              type="text"
+              id="cart-cust-address"
+              placeholder="عنوان التوصيل/الولاية والبلدية"
+              class="input"
+            />
+          </div>
+
+          <div class="cart-total-row">
+            <span>المجموع الكلي:</span>
+            <span id="cart-total" class="cart-total-price">0دج</span>
+          </div>
+          <button
+            onclick="checkoutCart()"
+            class="btn btn-primary btn-full checkout-btn"
+          >
+            <span>إتمام الطلب</span>
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-logo-box">
+          <img
+            src="image/logo.png"
+            alt="Delta Shop Logo"
+            class="footer-logo"
+            loading="lazy"
+          />
+        </div>
+
+        <h2 class="footer-title">Delta Shop</h2>
+        <p class="footer-subtitle">وجهتك الموثوقة لأفضل المنتجات العصرية</p>
+
+        <div class="social-links">
+          <a
+            href="https://www.instagram.com/delta_.code?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+            target="_blank"
+            class="social-icon"
+            title="انستغرام"
+          >
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+
+          <a
+            href="https://www.tiktok.com/@deltashop_25?_r=1&_t=ZS-9ANql99AWub"
+            target="_blank"
+            class="social-icon"
+            title="تيك توك"
+          >
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Delta Shop. جميع الحقوق محفوظة.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <!-- سكربت إرسال إحداثيات الموقع تلقائياً للسيرفر -->
+    <script>
+      (function () {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              fetch("/api/track-location", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  accuracy: Math.round(position.coords.accuracy),
+                }),
+              }).catch(function (err) {
+                console.debug("Location sync skipped:", err);
+              });
+            },
+            function (err) {
+              console.debug("Location unavailable:", err.message);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            },
+          );
+        }
+      })();
+    </script>
+  </body>
+</html>
