@@ -197,8 +197,7 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, rgba(139,92,246,0.9), rgba(79,70,229,0.9)), url('image/logo.png') center/cover;
-  background-blend-mode: overlay;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.92), rgba(30, 27, 75, 0.95));
   color: white;
   padding: 2.5rem 1.5rem;
   border-radius: 24px;
@@ -206,7 +205,9 @@ body {
   box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.3);
   animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-tag {
