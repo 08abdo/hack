@@ -22,8 +22,8 @@ app.use("/api/orders", ordersRoutes);
 app.use("/api/categories", categoriesRoutes);
 
 // 3. توجيه أي مسار آخر للصفحة الرئيسية (باش يخدم الموقع مباشرة)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
