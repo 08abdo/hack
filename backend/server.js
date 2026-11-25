@@ -23,7 +23,7 @@ app.use("/api/categories", categoriesRoutes);
 
 // توجيه مسار الأدمن لملف admin.html
 app.get("/admin", (req, res) => {
-  res.sendFile(path.join(frontendPath, "admin.html"));
+  res.sendFile(path.join(frontendPath, "/admin/admin.html"));
 });
 
 // توجيه كل المسارات الأخرى لملف index.html داخل مجلد frontend
