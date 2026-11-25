@@ -14,7 +14,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="style.css?v=12" />
+    <link rel="stylesheet" href="style.css?v=13" />
   </head>
   <body>
     <header class="header">
@@ -33,11 +33,12 @@
             onclick="toggleDarkMode()"
             class="btn-icon"
             title="تبديل الوضع"
+            aria-label="تغيير الوضع المظلم والفاتح"
           >
             <i id="theme-sun" class="fa-solid fa-sun hidden"></i>
             <i id="theme-moon" class="fa-solid fa-moon"></i>
           </button>
-          <button onclick="toggleCartModal()" class="btn-icon relative">
+          <button onclick="toggleCartModal()" class="btn-icon relative" aria-label="سلة التسوق">
             <i class="fa-solid fa-cart-shopping"></i>
             <span id="cart-badge" class="badge hidden">0</span>
           </button>
@@ -46,23 +47,40 @@
     </header>
 
     <main class="main-container">
+      <!-- واجهة Hero الجديدة مع زر التسوق ושريط الثقة -->
       <div class="hero">
         <span class="hero-tag">عروض حصرية وتوصيل سريع</span>
         <h1>أفضل المنتجات بلمسة عصرية</h1>
         <p>اختر من بين أقسامنا المتميزة واطلب مباشرة!</p>
+        
+        <div style="margin-top: 25px; display: flex; justify-content: center;">
+          <button onclick="document.getElementById('products-grid').scrollIntoView({behavior: 'smooth'})" class="btn btn-primary" style="padding: 12px 35px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);">
+            تسوق الآن <i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i>
+          </button>
+        </div>
+
+        <div style="margin-top: 35px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; opacity: 0.9;">
+          <span style="font-size: 0.85rem; font-weight: 700; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(5px);">
+            <i class="fa-solid fa-truck-fast"></i> توصيل 58 ولاية
+          </span>
+          <span style="font-size: 0.85rem; font-weight: 700; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; backdrop-filter: blur(5px);">
+            <i class="fa-solid fa-hand-holding-dollar"></i> الدفع عند الاستلام
+          </span>
+        </div>
       </div>
 
       <div class="section-group">
-        <h3 class="section-title">
+        <!-- تم تعديل h3 إلى h2 لحل مشكل الترتيب في Google PageSpeed -->
+        <h2 class="section-title">
           <i class="fa-solid fa-layer-group"></i>
           <span>أقسام المتجر</span>
-        </h3>
+        </h2>
         <div class="categories-bar" id="categories-bar"></div>
       </div>
 
       <div class="section-group">
         <div class="flex-between mb-1">
-          <h3 id="current-category-title">جميع المنتجات</h3>
+          <h2 id="current-category-title" class="section-title" style="margin-bottom: 0;">جميع المنتجات</h2>
           <span id="product-count" class="pill">0 منتج</span>
         </div>
         <div id="products-grid" class="products-grid"></div>
@@ -71,11 +89,11 @@
 
     <div id="product-modal" class="modal-overlay hidden">
       <div class="modal-card">
-        <button onclick="closeProductModal()" class="close-btn">&times;</button>
+        <button onclick="closeProductModal()" class="close-btn" aria-label="إغلاق نافذة المنتج">&times;</button>
         <div class="modal-img-box">
           <img id="modal-img" src="" alt="منتج" />
         </div>
-        <h3 id="modal-title"></h3>
+        <h2 id="modal-title" style="margin-bottom: 8px;"></h2>
         <p id="modal-desc" class="text-subtle"></p>
         <div id="colors-wrapper" class="mb-1 hidden">
           <span class="option-label">اللون:</span>
@@ -125,7 +143,7 @@
             <i class="fa-solid fa-cart-shopping"></i>
             <span>سلة التسوق</span>
           </div>
-          <button onclick="toggleCartModal()" class="close-btn">&times;</button>
+          <button onclick="toggleCartModal()" class="close-btn" aria-label="إغلاق السلة">&times;</button>
         </div>
         <div id="cart-items" class="cart-body">
           <div class="empty-cart">
@@ -172,7 +190,7 @@
     <footer class="site-footer">
       <div class="footer-content">
         <div class="footer-logo-box">
-          <img src="image/logo.png" alt="Delta Shop Logo" class="footer-logo" />
+          <img src="image/logo.png" alt="Delta Shop Logo" class="footer-logo" loading="lazy" />
         </div>
         <h2 class="footer-title">Delta Shop</h2>
         <p class="footer-subtitle">وجهتك الموثوقة لأفضل المنتجات العصرية</p>
@@ -182,6 +200,7 @@
             target="_blank"
             class="social-icon"
             title="انستغرام"
+            aria-label="رابط انستغرام"
             ><i class="fa-brands fa-instagram"></i
           ></a>
           <a
@@ -189,6 +208,7 @@
             target="_blank"
             class="social-icon"
             title="تيك توك"
+            aria-label="رابط تيك توك"
             ><i class="fa-brands fa-tiktok"></i
           ></a>
         </div>
