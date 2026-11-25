@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delta Shop - لوحة التحكم</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="admin-style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-container">
+        <div class="brand-area">
+          <div class="logo-box">
+            <img src="frontend/image/logo.png" alt="Logo" class="site-logo" />
+          </div>
+          <div>
+            <span class="brand-title">Delta Shop</span>
+            <span class="brand-subtitle">لوحة إدارة المتجر</span>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button
+            onclick="toggleDarkMode()"
+            class="btn-icon"
+            title="تبديل الوضع"
+          >
+            <i id="theme-sun" class="fa-solid fa-sun hidden"></i>
+            <i id="theme-moon" class="fa-solid fa-moon"></i>
+          </button>
+          
+          <button
+            id="logout-btn"
+            onclick="logoutAdmin()"
+            class="btn-icon hidden"
+            style="color: #ef4444;"
+            title="تسجيل الخروج"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+
+          <a
+            href="https://deltashop.duckdns.org/"
+            class="btn btn-primary"
+            style="text-decoration: none"
+          >
+            <i class="fa-solid fa-store"></i>
+            <span class="hide-mobile">الرجوع للمتجر</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-container">
+      <!-- الإحصائيات السريعة -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div>
+            <p class="stat-title">إجمالي الطلبات</p>
+            <h3 id="stat-orders" class="stat-value">0</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
+          <div>
+            <p class="stat-title">عدد المنتجات</p>
+            <h3 id="stat-products" class="stat-value">0</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+          <div>
+            <p class="stat-title">الربح الصافي</p>
+            <h3 id="stat-sales" class="stat-value">0 دج</h3>
+          </div>
+        </div>
+      </section>
+
+      <!-- قسم إدارة الأقسام -->
+      <section class="admin-section mb-1">
+        <h3 class="section-title mb-1">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>إدارة الأقسام</span>
+        </h3>
+        <form
+          id="category-form"
+          onsubmit="handleSaveCategory(event)"
+          style="display: flex; gap: 8px; margin-bottom: 15px"
+        >
+          <input
+            type="text"
+            id="category-name-input"
+            placeholder="اسم القسم الجديد (مثال: أحذية، رجالي...)"
+            class="input"
+            style="margin: 0"
+            required
+          />
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="white-space: nowrap"
+          >
+            <i class="fa-solid fa-plus"></i> إضافة قسم
+          </button>
+        </form>
+
+        <div
+          id="categories-badges-list"
+          style="display: flex; flex-wrap: wrap; gap: 8px"
+        >
+          <!-- تتولد الأقسام هنا تلقائياً -->
+        </div>
+      </section>
+
+      <!-- قسم إدارة المنتجات -->
+      <section class="admin-section">
+        <div class="flex-between mb-1">
+          <h3 class="section-title">
+            <i class="fa-solid fa-boxes-packing"></i>
+            <span>إدارة المنتجات</span>
+          </h3>
+          <button onclick="openAddProductModal()" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>إضافة منتج جديد</span>
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>اسم المنتج</th>
+                <th>القسم</th>
+                <th>المقاسات</th>
+                <th>سعر البيع</th>
+                <th>الربح الصافي</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- قسم إدارة الطلبات -->
+      <section class="admin-section">
+        <h3 class="section-title mb-1">
+          <i class="fa-solid fa-cart-flatbed"></i>
+          <span>الطلبات الواردة</span>
+        </h3>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>معرف الطلب</th>
+                <th>المنتج</th>
+                <th>الزبون</th>
+                <th>الهاتف</th>
+                <th>العنوان / الولاية</th>
+                <th>المجموع</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-list"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal إضافة / تعديل منتج -->
+    <div id="product-form-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <button onclick="toggleProductFormModal()" class="close-btn">
+          &times;
+        </button>
+        <h3 id="form-modal-title" class="mb-1">إضافة منتج جديد</h3>
+
+        <form id="product-form" onsubmit="handleSaveProduct(event)">
+          <input type="hidden" id="product-id" />
+
+          <input
+            type="text"
+            id="product-name-input"
+            placeholder="اسم المنتج"
+            class="input"
+            required
+          />
+
+          <div style="display: flex; gap: 8px">
+            <input
+              type="number"
+              step="1"
+              id="product-price-input"
+              placeholder="سعر البيع (دج)"
+              class="input"
+              required
+            />
+            <input
+              type="number"
+              step="1"
+              id="product-old-price-input"
+              placeholder="السعر قبل الخصم (دج)"
+              class="input"
+            />
+          </div>
+
+          <input
+            type="number"
+            step="1"
+            id="product-cost-input"
+            placeholder="سعر التكلفة عليّ (دج) - لحساب الربح"
+            class="input"
+            required
+          />
+
+          <!-- قائمة اختيار القسم المنسدلة -->
+          <select id="product-category-input" class="input" required>
+            <option value="">-- اختر القسم --</option>
+          </select>
+
+          <!-- مدخل المقاسات -->
+          <input
+            type="text"
+            id="product-sizes-input"
+            placeholder="المقاسات المتاحة (افصل بينها بفاصلة، مثل: S, M, L, XL)"
+            class="input"
+          />
+
+          <!-- رفع عدة صور -->
+          <div class="file-input-group mb-1">
+            <label
+              for="product-images-input"
+              class="btn btn-icon btn-full upload-label"
+            >
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>اختر صور المنتج من الهاتف</span>
+            </label>
+
+            <input
+              type="file"
+              id="product-images-input"
+              accept="image/*"
+              multiple
+              onchange="previewSelectedImages(event)"
+              style="display: none"
+            />
+          </div>
+
+          <div id="images-preview-container" class="images-preview-grid"></div>
+
+          <textarea
+            id="product-desc-input"
+            placeholder="وصف المنتج"
+            class="input mt-1"
+            rows="3"
+            style="resize: none"
+          ></textarea>
+
+          <button type="submit" class="btn btn-primary btn-full mt-1">
+            حفظ المنتج
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Auth Modal (نافذة تسجيل الدخول) -->
+    <div id="auth-modal" class="modal-overlay">
+      <div class="modal-card" style="max-width: 400px; text-align: center;">
+        <h3 class="mb-1">تسجيل الدخول للأدمن</h3>
+        <p class="text-subtle mb-1">يرجى إدخال الرمز السري للوصول للوحة التحكم</p>
+        
+        <form id="auth-form" onsubmit="handleLogin(event)">
+          <input
+            type="password"
+            id="admin-pass"
+            class="input"
+            placeholder="أدخل كلمة المرور"
+            required
+            style="margin-bottom: 15px; text-align: center; font-size: 1.1rem;"
+          />
+          <button type="submit" class="btn btn-primary btn-full">
+            دخول <i class="fa-solid fa-right-to-bracket"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+  </body>
+</html>
