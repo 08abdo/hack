@@ -11,7 +11,7 @@ app.use(express.json({ limit: "10mb" }));
 // تحديد مجلد الواجهة (frontend) كملفات ثابتة
 // استخدمنا path.join للرجوع خطوة للخلف ثم الدخول لمجلد frontend
 const frontendPath = path.join(__dirname, '..', 'frontend');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, { maxAge: '30d' }));
 
 const productsRoutes = require("./routes/products");
 const ordersRoutes = require("./routes/orders");
