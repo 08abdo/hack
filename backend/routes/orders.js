@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const supabase = require("../supabase");
 
-// --- دالة إرسال الإشعار للتيليغرام مع الأزرار ---
+// --- دالة إرسال الإشعار للتيليغرام ---
 const sendTelegramNotification = async (orderData) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -24,7 +24,6 @@ const sendTelegramNotification = async (orderData) => {
 🔢 <b>رقم الطلب:</b> ${orderData.order_code}
   `;
 
-  // الأزرار اللي راح يخرجو تحت الرسالة
   const reply_markup = {
     inline_keyboard: [
       [
@@ -53,14 +52,37 @@ const sendTelegramNotification = async (orderData) => {
 };
 
 // -----------------------------------------------------
-// 1. استقبال نقرات الأزرار من التيليغرام (Webhook)
+// مسار سحري لربط التيليغرام أوتوماتيكيا
+// -----------------------------------------------------
+router.get("/setup-bot", async (req, res) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  // يجيب رابط السيرفر تاعك أوتوماتيكيا
+  const webhookUrl = `https://${req.get('host')}/api/orders/webhook`; 
+  
+  if (!token) return res.send("❌ نسيت تحط TELEGRAM_BOT_TOKEN في Render");
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${token}/setWebhook?url=${webhookUrl}`);
+    const data = await response.json();
+    res.json({ message: "حالة ربط البوت:", data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// -----------------------------------------------------
+// استقبال نقرات الأزرار من التيليغرام (Webhook)
 // -----------------------------------------------------
 router.post("/webhook", async (req, res) => {
-  const update = req.body;
+  // 🚨 لازم نرجعو الجواب للتيليغرام في الحين باش ما يتبلوكيش البوت
+  res.sendStatus(200); 
 
-  if (update.callback_query) {
+  try {
+    const update = req.body;
+    if (!update.callback_query) return;
+
     const callbackQuery = update.callback_query;
-    const data = callbackQuery.data; // يجيب accept_1 أو reject_1
+    const data = callbackQuery.data; 
     const chatId = callbackQuery.message.chat.id;
     const messageId = callbackQuery.message.message_id;
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -70,28 +92,29 @@ router.post("/webhook", async (req, res) => {
 
     if (data.startsWith("accept_")) {
       newStatus = "تم التوصيل";
-      orderId = data.split("_")[1];
+      orderId = data.replace("accept_", "");
     } else if (data.startsWith("reject_")) {
       newStatus = "ملغى";
-      orderId = data.split("_")[1];
+      orderId = data.replace("reject_", "");
     }
 
     if (orderId && newStatus) {
       // 1. تحديث الحالة في قاعدة البيانات Supabase
-      await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
+      const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
+      if (error) throw error;
 
-      // 2. إرسال تنبيه صغير داخل التيليغرام بلي تمت العملية
+      // 2. إرسال تنبيه صغير داخل التيليغرام
       await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           callback_query_id: callbackQuery.id,
           text: `تم تغيير حالة الطلب إلى: ${newStatus}`,
-          show_alert: true
+          show_alert: false
         })
       });
 
-      // 3. مسح الأزرار من الرسالة القديمة باش ما تكليكيش عليهم مرتين
+      // 3. مسح الأزرار من الرسالة باش ما تكليكيش عليها مرتين
       await fetch(`https://api.telegram.org/bot${token}/editMessageReplyMarkup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,19 +131,19 @@ router.post("/webhook", async (req, res) => {
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify({
            chat_id: chatId,
-           text: `✅ تم تحديث الطلب رقم ${orderId} إلى: ${newStatus}`
+           text: `✅ تم تحديث الطلب رقم ${orderId} إلى: ${newStatus}`,
+           reply_to_message_id: messageId
          })
       });
     }
+  } catch (err) {
+    console.error("Webhook error:", err);
   }
-  
-  // لازم دايما نرجعو 200 للتيليغرام باش يعرف بلي استلمنا الأمر
-  res.sendStatus(200); 
 });
 
 // -----------------------------------------------------
 
-// 2. جلب جميع الطلبات
+// جلب جميع الطلبات
 router.get("/", async (req, res) => {
   try {
     const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
@@ -131,7 +154,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 3. إنشاء طلب جديد وإرسال الإشعار
+// إنشاء طلب جديد
 router.post("/", async (req, res) => {
   const { customer_name, phone, address, total, product_name, product_img, color, size } = req.body;
 
@@ -151,7 +174,7 @@ router.post("/", async (req, res) => {
 
     if (error) throw error;
     
-    // نبعثو الميساج للتيليغرام
+    // إرسال الإشعار
     await sendTelegramNotification(data[0]);
 
     res.status(201).json(data[0]);
@@ -160,7 +183,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 4. تحديث حالة الطلب من لوحة التحكم
+// تحديث حالة الطلب
 router.patch("/:id/status", async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
