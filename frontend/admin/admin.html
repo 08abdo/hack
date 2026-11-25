@@ -28,12 +28,12 @@
         </div>
 
         <div class="nav-buttons">
-          <button onclick="toggleDarkMode()" class="btn-icon" title="تبديل الوضع">
+          <button onclick="toggleDarkMode()" class="btn-icon" title="تبديل الوضع" aria-label="تغيير الوضع المظلم والفاتح">
             <i id="theme-sun" class="fa-solid fa-sun hidden"></i>
             <i id="theme-moon" class="fa-solid fa-moon"></i>
           </button>
           
-          <button id="logout-btn" onclick="logoutAdmin()" class="btn-icon hidden" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" title="تسجيل الخروج">
+          <button id="logout-btn" onclick="logoutAdmin()" class="btn-icon hidden" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" title="تسجيل الخروج" aria-label="تسجيل الخروج">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
 
@@ -73,10 +73,11 @@
 
       <!-- قسم إدارة الأقسام -->
       <section class="admin-section mb-2">
-        <h3 class="section-title mb-1">
+        <!-- تم تعديل h3 إلى h2 لحل مشكل الترتيب -->
+        <h2 class="section-title mb-1">
           <i class="fa-solid fa-layer-group"></i>
           <span>إدارة الأقسام</span>
-        </h3>
+        </h2>
         <form id="category-form" onsubmit="handleSaveCategory(event)" class="category-form-wrapper">
           <input type="text" id="category-name-input" placeholder="اسم القسم الجديد (مثال: إلكترونيات...)" class="input" style="margin: 0" required />
           <button type="submit" class="btn btn-primary" style="white-space: nowrap">
@@ -91,10 +92,11 @@
       <!-- قسم إدارة المنتجات -->
       <section class="admin-section mb-2">
         <div class="flex-between mb-1">
-          <h3 class="section-title">
+          <!-- تم تعديل h3 إلى h2 لحل مشكل الترتيب -->
+          <h2 class="section-title">
             <i class="fa-solid fa-boxes-packing"></i>
             <span>إدارة المنتجات</span>
-          </h3>
+          </h2>
           <button onclick="openAddProductModal()" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i>
             <span class="hide-mobile">إضافة منتج</span>
@@ -121,10 +123,11 @@
 
       <!-- قسم إدارة الطلبات -->
       <section class="admin-section">
-        <h3 class="section-title mb-1">
+        <!-- تم تعديل h3 إلى h2 لحل مشكل الترتيب -->
+        <h2 class="section-title mb-1">
           <i class="fa-solid fa-cart-flatbed"></i>
           <span>الطلبات الواردة</span>
-        </h3>
+        </h2>
 
         <div class="table-responsive">
           <table class="custom-table">
@@ -149,8 +152,9 @@
     <!-- Modal إضافة / تعديل منتج -->
     <div id="product-form-modal" class="modal-overlay hidden">
       <div class="modal-card">
-        <button onclick="toggleProductFormModal()" class="close-btn">&times;</button>
-        <h3 id="form-modal-title" class="section-title mb-1">إضافة منتج جديد</h3>
+        <button onclick="toggleProductFormModal()" class="close-btn" aria-label="إغلاق نافذة المنتج">&times;</button>
+        <!-- تم تعديل h3 إلى h2 -->
+        <h2 id="form-modal-title" class="section-title mb-1">إضافة منتج جديد</h2>
 
         <form id="product-form" onsubmit="handleSaveProduct(event)">
           <input type="hidden" id="product-id" />
@@ -193,7 +197,8 @@
         <div class="logo-box mx-auto mb-1" style="width: 70px; height: 70px; margin: 0 auto 15px;">
           <img src="image/logo.png" alt="Logo" class="site-logo" />
         </div>
-        <h3 class="mb-1" style="color: var(--primary); font-weight: 900;">لوحة تحكم الأدمن</h3>
+        <!-- تم تعديل h3 إلى h2 -->
+        <h2 class="mb-1" style="color: var(--primary); font-weight: 900;">لوحة تحكم الأدمن</h2>
         <p class="text-subtle mb-1">يرجى إدخال الرمز السري للمتابعة</p>
         
         <form id="auth-form" onsubmit="handleLogin(event)">
